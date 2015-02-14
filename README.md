@@ -16,8 +16,7 @@ Person person = new Person();
 String isoCode = elvis(person, p -> p.getAddress().getCountry().getISOCode());
 ```
 
-If either ```getAddress()``` or ```getCountry()``` will return ```null```, the whole call will return ```null```.
-All other runtime exceptions will be thrown.
+If either ```getAddress()``` or ```getCountry()``` will return ```null```, the whole call will return ```null``` (instead of throwing ugly NPE!).
 
 # Examples
 
