@@ -84,16 +84,16 @@ uploadArchives {
             }
 
             pom.project {
-                name 'gugis'
+                name 'jelvis'
                 packaging 'jar'
                 // optionally artifactId can be defined here
-                description 'Lightweight and robust framework for creating composite components using Guice.'
-                url 'https://github.com/lukaszbudnik/gugis'
+                description 'Elvis operator in Java 8!'
+                url 'https://github.com/lukaszbudnik/jelvis'
 
                 scm {
-                    connection 'scm:git:git@github.com:lukaszbudnik/gugis.git'
-                    developerConnection 'scm:git:git@github.com:lukaszbudnik/gugis.git'
-                    url 'git@github.com:lukaszbudnik/gugis.git'
+                    connection 'scm:git:git@github.com:lukaszbudnik/jelvis.git'
+                    developerConnection 'scm:git:git@github.com:lukaszbudnik/jelvis.git'
+                    url 'git@github.com:lukaszbudnik/jelvis.git'
                 }
 
                 licenses {
