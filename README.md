@@ -1,7 +1,7 @@
 jelvis [![Build Status](https://travis-ci.org/lukaszbudnik/jelvis.svg?branch=master)](https://travis-ci.org/lukaszbudnik/jelvis) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.lukaszbudnik.jelvis/jelvis/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/com.github.lukaszbudnik.jelvis/jelvis)
 ==============================
 
-Elvis operator in Java 8! Say not to NPE in long chained calls :)
+Elvis operator in Java 8! Say no to NPE in chained calls!
 
 # Getting started
 
