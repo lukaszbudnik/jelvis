@@ -1,0 +1,10 @@
+.idea/
+build/
+.gradle/
+.DS_Store
+jelvis.iml
+gugis.iml
+gradle/
+gradlew
+gradlew.bat
+

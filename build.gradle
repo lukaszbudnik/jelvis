@@ -1,0 +1,116 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'signing'
+    id 'com.github.hierynomus.license' version '0.11.0'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+group = 'com.github.lukaszbudnik.jelvis'
+archivesBaseName = 'jelvis'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url 'http://repository.apache.org/content/repositories/snapshots'
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+license {
+    header project.file('HEADER')
+
+    ext.year = Calendar.getInstance().get(Calendar.YEAR)
+    ext.name = 'Łukasz Budnik'
+    ext.email = 'lukasz.budnik@gmail.com'
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task printTestErrors {
+    def xmlReports = new File("${buildDir}/test-results")
+    if (xmlReports.exists()) {
+        xmlReports.eachFileMatch(groovy.io.FileType.FILES, ~/TEST\-.*\.xml/) {
+            def testsuite = new groovy.util.XmlParser().parse(it)
+            testsuite.testcase.findAll {
+                it.failure.size() > 0
+            }.each {
+                println it
+            }
+        }
+    }
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+def deployUsername = hasProperty('ossrhUsername') ? ossrhUsername : System.getenv('DEPLOY_USERNAME')
+
+def deployPassword = hasProperty('ossrhPassword') ? ossrhPassword : System.getenv('DEPLOY_PASSWORD')
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: deployUsername, password: deployPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: deployUsername, password: deployPassword)
+            }
+
+            pom.project {
+                name 'gugis'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'Lightweight and robust framework for creating composite components using Guice.'
+                url 'https://github.com/lukaszbudnik/gugis'
+
+                scm {
+                    connection 'scm:git:git@github.com:lukaszbudnik/gugis.git'
+                    developerConnection 'scm:git:git@github.com:lukaszbudnik/gugis.git'
+                    url 'git@github.com:lukaszbudnik/gugis.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'lukaszbudnik'
+                        name 'Łukasz Budnik'
+                        email 'lukasz.budnik@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
