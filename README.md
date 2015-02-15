@@ -16,7 +16,23 @@ Person person = new Person();
 String isoCode = elvis(person, p -> p.getAddress().getCountry().getISOCode());
 ```
 
-If either ```getAddress()``` or ```getCountry()``` will return ```null```, the whole call will return ```null``` (instead of throwing ugly NPE!).
+If either ```person``` is null or  ```getAddress()``` or ```getCountry()``` returns ```null```, the whole call returns ```null```.
+No NPE is thrown.
+
+Java 8 lambdas have some problems with functions throwing exceptions. If your methods throw checked exceptions you need
+to wrap functions like this:
+
+```
+import static com.github.lukaszbudnik.jelvis.Elvis.elvis;
+import static com.github.lukaszbudnik.jelvis.Elvis.wrappedFunction;
+//..
+Person person = new Person();
+try {
+    String line2 = elvis(person, wrappedFunction(p -> p.getAddress().getLine2()));
+} catch (ElvisException e) {
+    e.getCause(); // here you have the checked exception which was thrown under the hood
+}
+```
 
 # Examples
 
@@ -30,11 +46,11 @@ Use the following Maven dependency:
 <dependency>
   <groupId>com.github.lukaszbudnik.jelvis</groupId>
   <artifactId>jelvis</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
 </dependency>
 ```
 
-or open [search.maven.org](http://search.maven.org/#artifactdetails|com.github.lukaszbudnik.jelvis|jelvis|1.0|jar) and copy and paste dependency id for your favourite dependency management tool (Gradle (jelvis uses Gradle), Buildr, Ivy, sbt, Leiningen, etc).
+or open [search.maven.org](http://search.maven.org/#artifactdetails|com.github.lukaszbudnik.jelvis|jelvis|1.1|jar) and copy and paste dependency id for your favourite dependency management tool (Gradle (jelvis uses Gradle), Buildr, Ivy, sbt, Leiningen, etc).
 
 # License
 
