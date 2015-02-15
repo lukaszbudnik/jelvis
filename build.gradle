@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'maven'
     id 'signing'
     id 'com.github.hierynomus.license' version '0.11.0'
@@ -10,13 +11,33 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.github.lukaszbudnik.jelvis'
 archivesBaseName = 'jelvis'
-version = '1.0'
+version = '1.1'
 
 repositories {
     mavenCentral()
 
     maven {
         url 'http://repository.apache.org/content/repositories/snapshots'
+    }
+}
+
+jacoco {
+    toolVersion = "0.7.2.201409121644"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}
+
+test {
+    reports {
+        junitXml.enabled = true
+        html.enabled = true
     }
 }
 

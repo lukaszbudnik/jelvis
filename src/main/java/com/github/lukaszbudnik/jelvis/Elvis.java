@@ -11,14 +11,36 @@ package com.github.lukaszbudnik.jelvis;
 
 import java.util.function.Function;
 
-public class Elvis {
+public final class Elvis {
 
-    public static <P, R> R elvis(P p, Function<P, R> f) {
+    private Elvis() {
+    }
+
+    public static <T, R> R elvis(T t, Function<T, R> f) {
         try {
-            return f.apply(p);
+            return f.apply(t);
         } catch (NullPointerException e) {
             return null;
         }
+    }
+
+    public static <T, R> Function<T, R> wrappedFunction(FunctionThrowingException<T, R> f) {
+        return nf -> {
+            try {
+                return f.apply(nf);
+            } catch (RuntimeException e) {
+                // unchecked exceptions are re-thrown
+                throw e;
+            } catch (Exception e) {
+                // checked exceptions are wrapped into ElvisException for better traceability
+                throw new ElvisException("Checked exception was thrown", e);
+            }
+        };
+    }
+
+    @FunctionalInterface
+    public interface FunctionThrowingException<T, R> {
+        R apply(T t) throws Exception;
     }
 
 }
