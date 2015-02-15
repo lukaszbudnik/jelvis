@@ -17,11 +17,9 @@ String isoCode = elvis(person, p -> p.getAddress().getCountry().getISOCode());
 
 The first argument to ```elvis``` method is the root object and the second one is the function to be evaluated.
 
-If either ```person``` is null or  ```getAddress()``` or ```getCountry()``` returns ```null```, the whole call returns ```null```.
+If either ```person``` is null or  ```getAddress()``` or ```getCountry()``` returns null, the whole call returns null.
 
-No NPE is thrown.
-
-Java 8 lambdas have some problems with functions throwing exceptions. If the last method in a chain throws checked exception you need to use ```wrappedFunction``` like this:
+No ```NullPointerException``` is thrown. All other exceptions are preserved. However,  Java 8 lambdas have some problems with functions throwing checked exceptions. If your methods throw checked exception you need to use ```wrappedFunction``` like this:
 
 ```
 import static com.github.lukaszbudnik.jelvis.Elvis.elvis;
@@ -30,6 +28,8 @@ import static com.github.lukaszbudnik.jelvis.Elvis.wrappedFunction;
 Person person = new Person();
 String line2 = elvis(person, wrappedFunction(p -> p.getAddress().getLine2()));
 ```
+
+See examples for more information.
 
 # Examples
 
