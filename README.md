@@ -5,33 +5,30 @@ Elvis operator in Java 8! Say no to NPE in chained calls!
 
 # Getting started
 
-Import Elvis class or use the static import:
-
-```import static com.github.lukaszbudnik.jelvis.Elvis.elvis;```
-
-And chain your calls:
+1. Add jelvis to your project
+2. Use the static ```elvis``` method like this:
 
 ```
+import static com.github.lukaszbudnik.jelvis.Elvis.elvis;
+//...
 Person person = new Person();
 String isoCode = elvis(person, p -> p.getAddress().getCountry().getISOCode());
 ```
 
+The first argument to ```elvis``` method is the root object and the second one is the function to be evaluated.
+
 If either ```person``` is null or  ```getAddress()``` or ```getCountry()``` returns ```null```, the whole call returns ```null```.
+
 No NPE is thrown.
 
-Java 8 lambdas have some problems with functions throwing exceptions. If your methods throw checked exceptions you need
-to wrap functions like this:
+Java 8 lambdas have some problems with functions throwing exceptions. If the last method in a chain throws checked exception you need to use ```wrappedFunction``` like this:
 
 ```
 import static com.github.lukaszbudnik.jelvis.Elvis.elvis;
 import static com.github.lukaszbudnik.jelvis.Elvis.wrappedFunction;
-//..
+//...
 Person person = new Person();
-try {
-    String line2 = elvis(person, wrappedFunction(p -> p.getAddress().getLine2()));
-} catch (ElvisException e) {
-    e.getCause(); // here you have the checked exception which was thrown under the hood
-}
+String line2 = elvis(person, wrappedFunction(p -> p.getAddress().getLine2()));
 ```
 
 # Examples
