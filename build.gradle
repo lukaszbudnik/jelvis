@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'scala'
     id 'jacoco'
     id 'maven'
     id 'signing'
@@ -11,7 +12,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.github.lukaszbudnik.jelvis'
 archivesBaseName = 'jelvis'
-version = '1.1'
+version = '1.2'
 
 repositories {
     mavenCentral()
@@ -42,7 +43,13 @@ test {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'org.apache.logging.log4j:log4j-core:2.1'
+    compile 'org.scala-lang:scala-library:2.11.5'
+
+    testCompile 'org.specs2:specs2-core_2.11:2.4.16'
+    testCompile 'org.specs2:specs2-junit_2.11:2.4.16'
+    testCompile 'org.apache.logging.log4j:log4j-slf4j-impl:2.1'
+    testCompile 'junit:junit:4.12'
 }
 
 license {
@@ -56,6 +63,11 @@ license {
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
+}
+
+task testJar(type: Jar) {
+    classifier = 'tests'
+    from sourceSets.test.allSource
 }
 
 task javadocJar(type: Jar) {
@@ -78,7 +90,7 @@ task printTestErrors {
 }
 
 artifacts {
-    archives javadocJar, sourcesJar
+    archives javadocJar, sourcesJar, testJar
 }
 
 signing {
