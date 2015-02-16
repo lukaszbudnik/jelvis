@@ -9,6 +9,8 @@
  */
 package com.github.lukaszbudnik.jelvis;
 
+import com.github.lukaszbudnik.jelvis.Model.Address;
+import com.github.lukaszbudnik.jelvis.Model.Person;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,9 +30,9 @@ public class ElvisTest {
     @Test
     public void shouldReturnNotNullWhenAllIsGoodWrappedFunction() {
         Person person = new Person();
-        int ig = elvis(person, wrappedFunction(p -> p.getIQ()));
+        int iq = elvis(person, wrappedFunction(p -> p.getIQ()));
 
-        Assert.assertEquals(100, ig);
+        Assert.assertEquals(100, iq);
     }
 
     @Test
@@ -88,42 +90,6 @@ public class ElvisTest {
             Assert.assertEquals("Geo location declares Exception but is throwing runtime exception", e.getMessage());
         } catch (Throwable t) {
             Assert.fail("Throwable was not expected");
-        }
-    }
-
-    class Country {
-        String getISOCode() {
-            return "PL";
-        }
-    }
-
-    class Address {
-        Country getCountry() {
-            return null;
-        }
-
-        String getGeoLocation() throws Exception {
-            throw new RuntimeException("Geo location declares Exception but is throwing runtime exception");
-        }
-
-        // throws unchecked exception
-        String getLine1() {
-            throw new RuntimeException("getLine1 threw runtime exception");
-        }
-
-        // throws checked exception
-        String getLine2() throws Exception {
-            throw new Exception("getLine2 threw checked exception");
-        }
-    }
-
-    class Person {
-        Address getAddress() {
-            return new Address();
-        }
-
-        int getIQ() throws Exception {
-            return 100;
         }
     }
 
