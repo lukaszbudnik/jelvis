@@ -21,10 +21,22 @@ public final class Elvis {
     private Elvis() {
     }
 
-    public static <T, R> R elvis(T t, Function<T, R> f) {
+    public static <R> R elvis(NoArgFunctionThrowingException<R> f) {
+        try {
+            log.trace("About to apply no arg function " + f);
+            NoArgFunction<R> wrappedFunction = wrappedFunction(f);
+            return wrappedFunction.apply();
+        } catch (NullPointerException e) {
+            log.debug("NullPointerException caught - gracefully returning null instead", e);
+            return null;
+        }
+    }
+
+    public static <T, R> R elvis(T t, FunctionThrowingException<T, R> f) {
         try {
             log.trace("About to apply object " + t + " on function " + f);
-            return f.apply(t);
+            Function<T, R> wrappedFunction = wrappedFunction(f);
+            return wrappedFunction.apply(t);
         } catch (NullPointerException e) {
             log.debug("NullPointerException caught - gracefully returning null instead", e);
             return null;
@@ -47,9 +59,20 @@ public final class Elvis {
         };
     }
 
-    @FunctionalInterface
-    public interface FunctionThrowingException<T, R> {
-        R apply(T t) throws Exception;
+    public static <R> NoArgFunction<R> wrappedFunction(NoArgFunctionThrowingException<R> f) {
+        log.trace("Wrapping function " + f);
+        return () -> {
+            try {
+                log.trace("Delegating non-arg function " + f);
+                return f.apply();
+            } catch (RuntimeException e) {
+                log.debug("RuntimeException caught - re-throwing as is", e);
+                throw e;
+            } catch (Exception e) {
+                log.debug("Checked Exception caught - wrapping into ElvisException and re-throwing", e);
+                throw new ElvisException("Checked exception was thrown", e);
+            }
+        };
     }
 
 }

@@ -14,6 +14,7 @@ import com.github.lukaszbudnik.jelvis.Elvis._
 import com.github.lukaszbudnik.jelvis.ElvisScalaToJavaConverters._
 import com.github.lukaszbudnik.jelvis.Model._
 import org.junit.runner.RunWith
+import org.specs2.matcher.{MatchResult, Expectable, Matcher}
 import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 
@@ -29,6 +30,14 @@ class ElvisSpec extends Specification {
       iq must beEqualTo(100)
     }
 
+    "return expected values when all is good - using new syntax" in {
+      val person: Person = new Person
+
+      val iq: Int = elvis(() => person.getIQ)
+
+      iq must beEqualTo(100)
+    }
+
     "return null when chained call throws NPE" in {
       val person = new Person
       val isoCode = elvis(person, (p: Person) => p.getAddress.getCountry.getISOCode)
@@ -39,9 +48,10 @@ class ElvisSpec extends Specification {
     "throw ElvisException when chained call throws checked exception" in {
       val person = new Person
 
-      elvis(person, (p: Person) => p.getAddress.getLine2) must throwAn[Exception]("getLine2 threw checked exception")
+      elvis(person, (p: Person) => p.getAddress.getLine2) must throwAn[Exception].like {
+        case e: ElvisException => e.getCause.getMessage must equalTo("getLine2 threw checked exception")
+      }
     }
-
   }
 
 }
