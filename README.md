@@ -1,42 +1,60 @@
 jelvis [![Build Status](https://travis-ci.org/lukaszbudnik/jelvis.svg?branch=master)](https://travis-ci.org/lukaszbudnik/jelvis) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.lukaszbudnik.jelvis/jelvis/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/com.github.lukaszbudnik.jelvis/jelvis)
 ==============================
 
-Elvis operator in Java 8 & Scala! Say no to NPE in chained calls!
+jelvis is an elvis operator for Java 8 & Scala. jelvis eats `NullPointerException` in chained calls and returns null instead.
+
+For example in this chained call:
+
+```
+person.getAddress().getCountry()
+```
+
+you can get at least two NPEs: first when `person` is null and second when `getAddress()` returns null.
+
+jelvis takes care of NPEs for you. For the above call jelvis will return the value of `getCountry()` or null if either `person` or `getAddress()` is null. No NPE will be thrown.
 
 # Getting started
 
 ## Java 8
 
-1. Add jelvis to your project
-2. Use the static `elvis` method like this:
+All you need is just one static import:
 
 ```
 import static com.github.lukaszbudnik.jelvis.Elvis.elvis;
 //...
 Person person = new Person();
+// old syntax requires 2 arguments
+// the first argument to `elvis` method is the root object
+// the second one is the lambda function to be evaluated
 String isoCode = elvis(person, p -> p.getAddress().getCountry().getISOCode());
+
+// new syntax takes just a lambda to be evaluated
+// a little bit shorter than the old syntax.
+String isoCode = elvis(() -> person.getAddress().getCountry().getISOCode());
 ```
-
-The first argument to `elvis` method is the root object and the second one is the function to be evaluated.
-
-If either `person` is null or  `getAddress()` or `getCountry()` returns null, the whole call returns null.
 
 No `NullPointerException` is thrown. All other exceptions are preserved.
-However,  Java 8 lambdas have some problems with functions throwing checked exceptions.
-If your methods throw checked exception you need to use `wrappedFunction` like this:
+Java 8 lambdas have some problems with functions throwing checked exceptions (code simply does not compile).
+To overcome this limitation jelvis is wrapping all checked exceptions into a runtime exception: `ElvisException`.
+
+Prior to jelvis 1.3 you had to explicitly wrap functions throwing exceptions using `Elvis.wrappedFunction()`.
+This is now done automatically:
 
 ```
 import static com.github.lukaszbudnik.jelvis.Elvis.elvis;
-import static com.github.lukaszbudnik.jelvis.Elvis.wrappedFunction;
 //...
 Person person = new Person();
-String line2 = elvis(person, wrappedFunction(p -> p.getAddress().getLine2()));
+// starting with jelvis 1.3 there is no need to use Elvis.wrappedFunction()
+// old syntax
+String line2 = elvis(person, p -> p.getAddress().getLine2());
+// new syntax
+String line2 = elvis(() -> person.getAddress().getLine2());
 ```
 
 ## Scala
 
-There is an implicit converter which converts Scala `Function1` into Java 8 `Function`.
-All you have to do is import it in your code:
+There is an implicit converter which converts Scala `Function1` into jelvis functions.
+So in case of Scala you have to add two imports:
 
 ```
 import com.github.lukaszbudnik.jelvis.Elvis._
@@ -47,11 +65,14 @@ And then just use the `elvis` method in your code:
 
 ```
 val person = new Person
+// old syntax
 val isoCode = elvis(person, (p: Person) => p.getAddress.getCountry.getISOCode)
+// new syntax
+val isoCode = elvis(() => person.getAddress.getCountry.getISOCode)
 ```
 
 Exceptions? In Scala all exceptions are unchecked. You don't have to worry about them at all.
-For example `p.getAddress.getLine2` doesn't have to be wrapped with `wrappedFunction`.
+For example `p.getAddress.getLine2` doesn't have to be wrapped using `Elvis.wrappedFunction()`.
 Thus, when running from Scala, you will never see `ElvisException`.
 The call simply looks like this:
 

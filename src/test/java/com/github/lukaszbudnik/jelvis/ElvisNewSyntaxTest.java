@@ -16,12 +16,12 @@ import org.junit.Test;
 
 import static com.github.lukaszbudnik.jelvis.Elvis.elvis;
 
-public class ElvisTest {
+public class ElvisNewSyntaxTest {
 
     @Test
     public void shouldReturnNotNullWhenAllIsGood() {
         Person person = new Person();
-        Address address = elvis(person, p -> p.getAddress());
+        Address address = elvis(() -> person.getAddress());
 
         Assert.assertNotNull(address);
     }
@@ -29,7 +29,7 @@ public class ElvisTest {
     @Test
     public void shouldReturnNotNullWhenAllIsGoodWrappedFunction() {
         Person person = new Person();
-        int iq = elvis(person, p -> p.getIQ());
+        int iq = elvis(() -> person.getIQ());
 
         Assert.assertEquals(100, iq);
     }
@@ -37,7 +37,7 @@ public class ElvisTest {
     @Test
     public void shouldReturnNullWhenChainedGetterReturnsNull() {
         Person person = new Person();
-        String isoCode = elvis(person, p -> p.getAddress().getCountry().getISOCode());
+        String isoCode = elvis(() -> person.getAddress().getCountry().getISOCode());
 
         Assert.assertNull(isoCode);
     }
@@ -45,7 +45,7 @@ public class ElvisTest {
     @Test
     public void shouldReturnNullWhenRootObjectIsNull() {
         Person person = null;
-        String isoCode = elvis(person, p -> p.getAddress().getCountry().getISOCode());
+        String isoCode = elvis(() -> person.getAddress().getCountry().getISOCode());
 
         Assert.assertNull(isoCode);
     }
@@ -55,7 +55,7 @@ public class ElvisTest {
         Person person = new Person();
 
         try {
-            elvis(person, p -> p.getAddress().getLine1());
+            elvis(() -> person.getAddress().getLine1());
             Assert.fail();
         } catch (RuntimeException e) {
             Assert.assertEquals("getLine1 threw runtime exception", e.getMessage());
@@ -69,7 +69,7 @@ public class ElvisTest {
         Person person = new Person();
 
         try {
-            elvis(person, p -> p.getAddress().getLine2());
+            elvis(() -> person.getAddress().getLine2());
             Assert.fail("Exception was expected");
         } catch (ElvisException e) {
             Assert.assertEquals("getLine2 threw checked exception", e.getCause().getMessage());
@@ -83,7 +83,7 @@ public class ElvisTest {
         Person person = new Person();
 
         try {
-            elvis(person, p -> p.getAddress().getGeoLocation());
+            elvis(() -> person.getAddress().getGeoLocation());
             Assert.fail("Exception was expected");
         } catch (RuntimeException e) {
             Assert.assertEquals("Geo location declares Exception but is throwing runtime exception", e.getMessage());

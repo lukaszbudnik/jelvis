@@ -12,7 +12,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 group = 'com.github.lukaszbudnik.jelvis'
 archivesBaseName = 'jelvis'
-version = '1.2'
+version = '1.3.0'
 
 repositories {
     mavenCentral()
@@ -119,8 +119,7 @@ uploadArchives {
             pom.project {
                 name 'jelvis'
                 packaging 'jar'
-                // optionally artifactId can be defined here
-                description 'Elvis operator in Java 8!'
+                description 'Elvis operator for Java 8 and Scala'
                 url 'https://github.com/lukaszbudnik/jelvis'
 
                 scm {
